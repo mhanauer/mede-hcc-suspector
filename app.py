@@ -28,6 +28,7 @@ def generate_dataframe():
 # Main function for the Streamlit app
 def main():
     st.title("HCC Diabetes Data with Suspect HCC Filter")
+    st.markdown("The HCC Suscept tool identifies members/patients with a 75% probability of having an HCC but were not classified in 2023 or 2024.")
 
     # Generate the dataframe
     df = generate_dataframe()
