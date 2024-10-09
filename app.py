@@ -23,30 +23,40 @@ def generate_dataframe():
         'No'
     )
     
+    # Add the Auditable HCC column
+    df['Auditable HCC'] = np.where(
+        ((df['2023 HCC Diabetes'] == 'Yes') | (df['2024 HCC Diabetes'] == 'Yes')) & (df['Probability HCC 2024 Diabetes'] < 25),
+        'Yes',
+        'No'
+    )
+    
     return df
 
 # Main function for the Streamlit app
 def main():
-    st.title("HCC Diabetes Data with Suspect HCC Filter")
-    st.markdown("The HCC Suscept tool identifies members/patients with a 75% probability of having an HCC but were not classified in 2023 or 2024.")
-
+    st.title("HCC Diabetes Data with Filters")
+    st.markdown("This tool identifies members/patients based on HCC classifications and probabilities.")
+    
     # Generate the dataframe
     df = generate_dataframe()
-
-    # Show the dataframe before filter
-    st.write("Full Data:")
-    st.dataframe(df)
-
-    # Add a checkbox to filter for Suspect HCC
-    suspect_filter = st.checkbox("Show only Suspect HCC")
-
-    # Apply the filter based on checkbox
-    if suspect_filter:
+    
+    # Add a radio button to select the filter
+    filter_option = st.radio("Filter data by:", options=["Show All", "Show Suspect HCC", "Show Auditable HCC"])
+    
+    # Apply the filter based on selection
+    if filter_option == "Show All":
+        st.write("Full Data:")
+        st.dataframe(df)
+    elif filter_option == "Show Suspect HCC":
         df_filtered = df[df['Suspect HCC'] == 'Yes']
         st.write("Filtered Data (Suspect HCC only):")
         st.dataframe(df_filtered)
+    elif filter_option == "Show Auditable HCC":
+        df_filtered = df[df['Auditable HCC'] == 'Yes']
+        st.write("Filtered Data (Auditable HCC only):")
+        st.dataframe(df_filtered)
     else:
         st.write("No filter applied.")
-
+    
 if __name__ == '__main__':
     main()
